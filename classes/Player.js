@@ -50,12 +50,28 @@ class Player {
         };
         this.currentSprite = this.sprites.idle;
         this.facing = "right";
+        this.hitbox = {
+            x: 0,
+            y: 0,
+            width: 20,
+            height: 23,
+        };
     }
 
     draw(c) {
         // Red square debug code
         // c.fillStyle = "rgba(255, 0, 0, 0.5)";
         // c.fillRect(this.x, this.y, this.width, this.height);
+
+        // Hitbox
+        // c.fillStyle = "rgba(0, 0, 255, 0.5)";
+        // c.fillRect(
+        //     this.hitbox.x,
+        //     this.hitbox.y,
+        //     this.hitbox.width,
+        //     this.hitbox.height
+        // );
+
         if (this.isImageLoaded === true) {
             let xScale = 1;
             let x = this.x;
@@ -80,6 +96,8 @@ class Player {
                 this.height
             );
             c.restore();
+            console.log(this.x);
+            console.log(this.hitbox.x);
         }
     }
 
@@ -94,6 +112,14 @@ class Player {
                 (this.currentFrame + 1) % this.currentSprite.frames;
             this.elapsedTime -= secondsInterval;
         }
+
+        if (this.x > 1572) {
+            this.x = 1572;
+        }
+
+        // Update hitbox position
+        this.hitbox.x = this.x + 4;
+        this.hitbox.y = this.y + 9;
 
         this.applyGravity(deltaTime);
 
@@ -162,10 +188,12 @@ class Player {
 
     updateHorizontalPosition(deltaTime) {
         this.x += this.velocity.x * deltaTime;
+        this.hitbox.x += this.velocity.x * deltaTime;
     }
 
     updateVerticalPosition(deltaTime) {
         this.y += this.velocity.y * deltaTime;
+        this.hitbox.y += this.velocity.y * deltaTime;
     }
 
     applyGravity(deltaTime) {
@@ -189,20 +217,24 @@ class Player {
 
             // Check if a collision exists on all axes
             if (
-                this.x <= collisionBlock.x + collisionBlock.width &&
-                this.x + this.width >= collisionBlock.x &&
-                this.y + this.height >= collisionBlock.y &&
-                this.y <= collisionBlock.y + collisionBlock.height
+                this.hitbox.x <= collisionBlock.x + collisionBlock.width &&
+                this.hitbox.x + this.hitbox.width >= collisionBlock.x &&
+                this.hitbox.y + this.hitbox.height >= collisionBlock.y &&
+                this.hitbox.y <= collisionBlock.y + collisionBlock.height
             ) {
                 // Check collision while player is going left
                 if (this.velocity.x < -0) {
-                    this.x = collisionBlock.x + collisionBlock.width + buffer;
+                    this.hitbox.x =
+                        collisionBlock.x + collisionBlock.width + buffer;
+                    this.x = this.hitbox.x - 4;
                     break;
                 }
 
                 // Check collision while player is going right
                 if (this.velocity.x > 0) {
-                    this.x = collisionBlock.x - this.width - buffer;
+                    this.hitbox.x =
+                        collisionBlock.x - this.hitbox.width - buffer;
+                    this.x = this.hitbox.x - 4;
                     break;
                 }
             }
@@ -216,15 +248,17 @@ class Player {
 
             // If a collision exists
             if (
-                this.x <= collisionBlock.x + collisionBlock.width &&
-                this.x + this.width >= collisionBlock.x &&
-                this.y + this.height >= collisionBlock.y &&
-                this.y <= collisionBlock.y + collisionBlock.height
+                this.hitbox.x <= collisionBlock.x + collisionBlock.width &&
+                this.hitbox.x + this.hitbox.width >= collisionBlock.x &&
+                this.hitbox.y + this.hitbox.height >= collisionBlock.y &&
+                this.hitbox.y <= collisionBlock.y + collisionBlock.height
             ) {
                 // Check collision while player is going up
                 if (this.velocity.y < 0) {
                     this.velocity.y = 0;
-                    this.y = collisionBlock.y + collisionBlock.height + buffer;
+                    this.hitbox.y =
+                        collisionBlock.y + collisionBlock.height + buffer;
+                    this.y = this.hitbox.y - 9;
                     break;
                 }
 
@@ -232,6 +266,8 @@ class Player {
                 if (this.velocity.y > 0) {
                     this.velocity.y = 0;
                     this.y = collisionBlock.y - this.height - buffer;
+                    this.hitbox.y =
+                        collisionBlock.y - this.hitbox.height - buffer;
                     this.isOnGround = true;
                     break;
                 }

@@ -182,6 +182,9 @@ function animate(backgroundCanvas) {
     // Render scene
     c.save();
     c.scale(dpr, dpr);
+    if (camera.x > 574) {
+        camera.x = 574;
+    }
     c.translate(-camera.x, camera.y);
     c.clearRect(0, 0, canvas.width, canvas.height);
     c.drawImage(oceanBackgroundCanvas, camera.x * 0.32, 0);
