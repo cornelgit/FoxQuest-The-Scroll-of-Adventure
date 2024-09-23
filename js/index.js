@@ -129,8 +129,8 @@ const renderStaticLayers = async (layersData) => {
 
 // Change xy coordinates to move player's default position
 let player = new Player({
-    x: 100,
-    y: 100,
+    x: 20,
+    y: 225,
     size: 32,
     velocity: { x: 0, y: 0 },
 });
@@ -138,37 +138,49 @@ let player = new Player({
 let oposums = [
     new Oposum({
         x: 650,
-        y: 0,
+        y: 220,
         width: 36,
         height: 28,
     }),
     new Oposum({
         x: 450,
-        y: 0,
+        y: 250,
         width: 36,
         height: 28,
     }),
     new Oposum({
         x: 600,
-        y: 0,
+        y: 220,
         width: 36,
         height: 28,
     }),
     new Oposum({
         x: 400,
-        y: 0,
+        y: 250,
         width: 36,
         height: 28,
     }),
     new Oposum({
-        x: 1000,
-        y: 0,
+        x: 1080,
+        y: 280,
         width: 36,
         height: 28,
     }),
     new Oposum({
-        x: 1500,
-        y: 0,
+        x: 1600,
+        y: 220,
+        width: 36,
+        height: 28,
+    }),
+    new Oposum({
+        x: 900,
+        y: 540,
+        width: 36,
+        height: 28,
+    }),
+    new Oposum({
+        x: 1150,
+        y: 540,
         width: 36,
         height: 28,
     }),
@@ -239,9 +251,9 @@ let camera = {
     y: 0,
 };
 
-const SCROLL_POST_RIGHT = 500;
+const SCROLL_POST_RIGHT = 330;
 const SCROLL_POST_TOP = 100;
-const SCROLL_POST_BOTTOM = 280;
+const SCROLL_POST_BOTTOM = 220;
 let oceanBackgroundCanvas = null;
 let brambleBackgroundCanvas = null;
 let gems = [];
@@ -310,8 +322,8 @@ function init() {
     });
 
     player = new Player({
-        x: 100,
-        y: 100,
+        x: 20,
+        y: 225,
         size: 32,
         velocity: { x: 0, y: 0 },
     });
@@ -319,37 +331,49 @@ function init() {
     oposums = [
         new Oposum({
             x: 650,
-            y: 0,
+            y: 220,
             width: 36,
             height: 28,
         }),
         new Oposum({
             x: 450,
-            y: 0,
+            y: 250,
             width: 36,
             height: 28,
         }),
         new Oposum({
             x: 600,
-            y: 0,
+            y: 220,
             width: 36,
             height: 28,
         }),
         new Oposum({
             x: 400,
-            y: 0,
+            y: 250,
             width: 36,
             height: 28,
         }),
         new Oposum({
-            x: 1000,
-            y: 0,
+            x: 1080,
+            y: 280,
             width: 36,
             height: 28,
         }),
         new Oposum({
-            x: 1500,
-            y: 0,
+            x: 1600,
+            y: 220,
+            width: 36,
+            height: 28,
+        }),
+        new Oposum({
+            x: 900,
+            y: 540,
+            width: 36,
+            height: 28,
+        }),
+        new Oposum({
+            x: 1150,
+            y: 540,
             width: 36,
             height: 28,
         }),
@@ -518,7 +542,7 @@ function animate(backgroundCanvas) {
 
     // Render scene
     c.save();
-    c.scale(dpr, dpr);
+    c.scale(dpr + 1, dpr + 1);
     c.translate(-camera.x, camera.y);
     c.clearRect(0, 0, canvas.width, canvas.height);
     c.drawImage(oceanBackgroundCanvas, camera.x * 0.32, 0);
@@ -539,9 +563,9 @@ function animate(backgroundCanvas) {
     }
     c.restore();
 
-    // Ui save and restore
+    // UI save and restore
     c.save();
-    c.scale(dpr, dpr);
+    c.scale(dpr + 1, dpr + 1);
     for (let i = hearts.length - 1; i >= 0; --i) {
         const heart = hearts[i];
         heart.draw(c);
