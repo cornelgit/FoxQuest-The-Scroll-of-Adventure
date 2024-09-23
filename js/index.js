@@ -14,25 +14,29 @@ const brambleLayerData = {
 };
 
 const layersData = {
+    l_New_Layer_1: l_New_Layer_1,
+    l_New_Layer_2: l_New_Layer_2,
     l_New_Layer_8: l_New_Layer_8,
-    l_New_Layer_3: l_New_Layer_3,
+    l_Back_Tiles: l_Back_Tiles,
     l_Decorations: l_Decorations,
-    l_New_Layer_5: l_New_Layer_5,
-    l_New_Layer_6: l_New_Layer_6,
-    l_New_Layer_9: l_New_Layer_9,
-    l_New_Layer_9_1: l_New_Layer_9_1,
+    l_Front_Tiles: l_Front_Tiles,
+    l_Shrooms: l_Shrooms,
+    l_Collisions: l_Collisions,
+    l_Grass: l_Grass,
+    l_Tress: l_Trees,
 };
 
 const tilesets = {
     l_New_Layer_1: { imageUrl: "./images/decorations.png", tileSize: 16 },
     l_New_Layer_2: { imageUrl: "./images/decorations.png", tileSize: 16 },
     l_New_Layer_8: { imageUrl: "./images/tileset.png", tileSize: 16 },
-    l_New_Layer_3: { imageUrl: "./images/tileset.png", tileSize: 16 },
+    l_Back_Tiles: { imageUrl: "./images/tileset.png", tileSize: 16 },
     l_Decorations: { imageUrl: "./images/decorations.png", tileSize: 16 },
-    l_New_Layer_5: { imageUrl: "./images/tileset.png", tileSize: 16 },
-    l_New_Layer_6: { imageUrl: "./images/decorations.png", tileSize: 16 },
-    l_New_Layer_9: { imageUrl: "./images/decorations.png", tileSize: 16 },
-    l_New_Layer_9_1: { imageUrl: "./images/tileset.png", tileSize: 16 },
+    l_Front_Tiles: { imageUrl: "./images/tileset.png", tileSize: 16 },
+    l_Shrooms: { imageUrl: "./images/decorations.png", tileSize: 16 },
+    l_Collisions: { imageUrl: "./images/decorations.png", tileSize: 16 },
+    l_Grass: { imageUrl: "./images/tileset.png", tileSize: 16 },
+    l_Trees: { imageUrl: "./images/decorations.png", tileSize: 16 },
 };
 
 // Tile setup
@@ -515,9 +519,6 @@ function animate(backgroundCanvas) {
     // Render scene
     c.save();
     c.scale(dpr, dpr);
-    if (camera.x > 574) {
-        camera.x = 574;
-    }
     c.translate(-camera.x, camera.y);
     c.clearRect(0, 0, canvas.width, canvas.height);
     c.drawImage(oceanBackgroundCanvas, camera.x * 0.32, 0);
@@ -536,9 +537,6 @@ function animate(backgroundCanvas) {
         const gem = gems[i];
         gem.draw(c);
     }
-    // c.fillRect(SCROLL_POST_RIGHT, 100, 10, 100);
-    // c.fillRect(300, SCROLL_POST_TOP, 100, 10);
-    // c.fillRect(300, SCROLL_POST_BOTTOM, 100, 10);
     c.restore();
 
     // Ui save and restore

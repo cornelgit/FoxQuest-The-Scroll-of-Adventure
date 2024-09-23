@@ -124,9 +124,9 @@ class Player {
             this.elapsedTime -= secondsInterval;
         }
 
-        if (this.x > 1572) {
-            this.x = 1572;
-        }
+        // if (this.x > 1572) {
+        //     this.x = 1572;
+        // }
 
         // Update hitbox position
         this.hitbox.x = this.x + 4;
