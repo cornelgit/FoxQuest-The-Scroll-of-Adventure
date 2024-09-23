@@ -67,19 +67,6 @@ class Player {
     }
 
     draw(c) {
-        // Red square debug code
-        // c.fillStyle = "rgba(255, 0, 0, 0.5)";
-        // c.fillRect(this.x, this.y, this.width, this.height);
-
-        // Hitbox
-        // c.fillStyle = "rgba(0, 0, 255, 0.5)";
-        // c.fillRect(
-        //     this.hitbox.x,
-        //     this.hitbox.y,
-        //     this.hitbox.width,
-        //     this.hitbox.height
-        // );
-
         if (this.isImageLoaded === true) {
             let xScale = 1;
             let x = this.x;

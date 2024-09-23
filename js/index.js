@@ -251,7 +251,7 @@ let camera = {
 
 const SCROLL_POST_RIGHT = 330;
 const SCROLL_POST_TOP = 100;
-const SCROLL_POST_BOTTOM = 220;
+const SCROLL_POST_BOTTOM = 240;
 let oceanBackgroundCanvas = null;
 let brambleBackgroundCanvas = null;
 let gems = [];
