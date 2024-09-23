@@ -43,19 +43,6 @@ class Oposum {
     }
 
     draw(c) {
-        // Red square debug code
-        // c.fillStyle = 'rgba(255, 0, 0, 0.5)'
-        // c.fillRect(this.x, this.y, this.width, this.height)
-
-        // Hitbox
-        // c.fillStyle = 'rgba(0, 0, 255, 0.5)'
-        // c.fillRect(
-        //   this.hitbox.x,
-        //   this.hitbox.y,
-        //   this.hitbox.width,
-        //   this.hitbox.height,
-        // )
-
         if (this.isImageLoaded === true) {
             let xScale = 1;
             let x = this.x;
@@ -151,9 +138,9 @@ class Oposum {
     handleInput(keys) {
         this.velocity.x = 0;
 
-        if (keys.d.pressed) {
+        if (keys.right.pressed) {
             this.velocity.x = OPOSUM_X_VELOCITY;
-        } else if (keys.a.pressed) {
+        } else if (keys.left.pressed) {
             this.velocity.x = -OPOSUM_X_VELOCITY;
         }
     }

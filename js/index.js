@@ -14,8 +14,6 @@ const brambleLayerData = {
 };
 
 const layersData = {
-    l_New_Layer_1: l_New_Layer_1,
-    l_New_Layer_2: l_New_Layer_2,
     l_New_Layer_8: l_New_Layer_8,
     l_Back_Tiles: l_Back_Tiles,
     l_Decorations: l_Decorations,
@@ -143,7 +141,7 @@ let oposums = [
         height: 28,
     }),
     new Oposum({
-        x: 450,
+        x: 425,
         y: 250,
         width: 36,
         height: 28,
@@ -155,7 +153,7 @@ let oposums = [
         height: 28,
     }),
     new Oposum({
-        x: 400,
+        x: 325,
         y: 250,
         width: 36,
         height: 28,
@@ -234,13 +232,13 @@ let hearts = [
 ];
 
 const keys = {
-    w: {
+    left: {
         pressed: false,
     },
-    a: {
+    right: {
         pressed: false,
     },
-    d: {
+    up: {
         pressed: false,
     },
 };
@@ -336,7 +334,7 @@ function init() {
             height: 28,
         }),
         new Oposum({
-            x: 450,
+            x: 425,
             y: 250,
             width: 36,
             height: 28,
@@ -348,7 +346,7 @@ function init() {
             height: 28,
         }),
         new Oposum({
-            x: 400,
+            x: 325,
             y: 250,
             width: 36,
             height: 28,
@@ -523,11 +521,15 @@ function animate(backgroundCanvas) {
             // remove a gem from game on collision
             gems.splice(i, 1);
             ++gemCount;
+
+            // Winning condition - acquire all gems
+            if (gems.length === 0) {
+            }
         }
     }
 
     // Track scroll post distance
-    if (player.x > SCROLL_POST_RIGHT) {
+    if (player.x > SCROLL_POST_RIGHT && player.x < 1680) {
         const scrollPostDistance = player.x - SCROLL_POST_RIGHT;
         camera.x = scrollPostDistance;
     }

@@ -214,9 +214,9 @@ class Player {
     handleInput(keys) {
         this.velocity.x = 0;
 
-        if (keys.d.pressed) {
+        if (keys.right.pressed) {
             this.velocity.x = X_VELOCITY;
-        } else if (keys.a.pressed) {
+        } else if (keys.left.pressed) {
             this.velocity.x = -X_VELOCITY;
         }
     }
