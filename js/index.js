@@ -15,7 +15,7 @@ const popSound = new Audio("./sounds/pop.mp3");
 const backgroundMusic = new Audio("./sounds/background-music.ogg");
 
 // Menu
-let gameState = "menu"; // "menu", "playing", or "won"
+let gameState = "menu"; // "menu", "playing", "won", or "lost"
 
 // Menu text settings
 const menuText = "Press any key to start";
@@ -526,8 +526,10 @@ function animate(backgroundCanvas) {
                         player.setIsInvincible();
                         playerHitSound.play();
                     } else if (fullHearts.length === 0) {
+                        backgroundMusic.pause();
                         gameOverSound.volume = 0.25;
                         gameOverSound.play();
+                        gameState = "lost";
                     }
                 }
             }
@@ -645,7 +647,26 @@ function animate(backgroundCanvas) {
             canvas.width / 2,
             canvas.height / 2
         );
-        c.font = "20px Arial";
+        c.font = "24px Arial";
+        c.fillText(
+            "Press any key to return to the menu",
+            canvas.width / 2,
+            canvas.height / 2 + 40
+        );
+    } else if (gameState === "lost") {
+        // Draw lost message
+        c.fillStyle = "rgba(0, 0, 0, 0.7)";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+        c.fillStyle = "white";
+        c.font = "40px Arial";
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        c.fillText(
+            "You ran out of lives! Better luck next time.",
+            canvas.width / 2,
+            canvas.height / 2
+        );
+        c.font = "24px Arial";
         c.fillText(
             "Press any key to return to the menu",
             canvas.width / 2,
@@ -677,7 +698,7 @@ const handleKeyPress = () => {
         gameState = "playing";
         init();
         canvas.classList.remove("menu-background");
-    } else if (gameState === "won") {
+    } else if (gameState === "won" || gameState === "lost") {
         gameState = "menu";
     }
 };
