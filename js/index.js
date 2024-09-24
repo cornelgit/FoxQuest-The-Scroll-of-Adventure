@@ -440,7 +440,7 @@ function init() {
     };
 
     backgroundMusic.currentTime = 0;
-    backgroundMusic.volume = 0.15;
+    backgroundMusic.volume = 0.1;
     backgroundMusic.play();
 }
 
