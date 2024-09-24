@@ -12,9 +12,10 @@ const gameOverSound = new Audio("./sounds/game-over.mp3");
 const gameWonSound = new Audio("./sounds/game-won.mp3");
 const playerHitSound = new Audio("./sounds/player-hit.mp3");
 const popSound = new Audio("./sounds/pop.mp3");
+const backgroundMusic = new Audio("./sounds/background-music.ogg");
 
 // Menu
-let gameState = "menu"; // "menu" or "playing"
+let gameState = "menu"; // "menu", "playing", or "won"
 
 // Menu text settings
 const menuText = "Press any key to start";
@@ -437,6 +438,10 @@ function init() {
         x: 0,
         y: 0,
     };
+
+    backgroundMusic.currentTime = 0;
+    backgroundMusic.volume = 0.15;
+    backgroundMusic.play();
 }
 
 // Game loop
@@ -523,7 +528,6 @@ function animate(backgroundCanvas) {
                     } else if (fullHearts.length === 0) {
                         gameOverSound.volume = 0.25;
                         gameOverSound.play();
-                        init();
                     }
                 }
             }
@@ -573,8 +577,10 @@ function animate(backgroundCanvas) {
 
                 // Winning condition - acquire all gems
                 if (gems.length === 0) {
-                    gameWonSound.volume = 0.4;
+                    backgroundMusic.pause();
+                    gameWonSound.volume = 0.25;
                     gameWonSound.play();
+                    gameState = "won";
                 }
             }
         }
@@ -626,6 +632,25 @@ function animate(backgroundCanvas) {
         gemUI.draw(c);
         c.fillText(gemCount, 33, 46);
         c.restore();
+    } else if (gameState === "won") {
+        // Draw win message
+        c.fillStyle = "rgba(0, 0, 0, 0.7)";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+        c.fillStyle = "white";
+        c.font = "40px Arial";
+        c.textAlign = "center";
+        c.textBaseline = "middle";
+        c.fillText(
+            "Congratulations You Win!",
+            canvas.width / 2,
+            canvas.height / 2
+        );
+        c.font = "20px Arial";
+        c.fillText(
+            "Press any key to return to the menu",
+            canvas.width / 2,
+            canvas.height / 2 + 40
+        );
     }
 
     requestAnimationFrame(() => animate(backgroundCanvas));
@@ -652,6 +677,8 @@ const handleKeyPress = () => {
         gameState = "playing";
         init();
         canvas.classList.remove("menu-background");
+    } else if (gameState === "won") {
+        gameState = "menu";
     }
 };
 
