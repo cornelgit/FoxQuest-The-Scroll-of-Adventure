@@ -461,10 +461,31 @@ function animate(backgroundCanvas) {
             textAlign: "center",
             textBaseline: "middle",
         };
+
+        // Draw background fox image
         canvas.classList.add("menu-background");
+
+        // Draw the menu background
         c.fillStyle = "rgba(0, 0, 0, 0.7)";
         c.fillRect(0, 0, canvas.width, canvas.height);
-        c.fillStyle = menuTextStyle.color;
+
+        // Set the background color for the menu text
+        c.fillStyle = "#333"; // Background color for the text
+        const textWidth = c.measureText(menuText).width; // Measure text width
+        const textHeight = 40; // Approximate height of the text
+        const textX = canvas.width / 2;
+        const textY = canvas.height / 2;
+
+        // Draw the rectangle behind the text
+        c.fillRect(
+            textX - textWidth / 2 - 10,
+            textY - textHeight / 2 - 10,
+            textWidth + 20,
+            textHeight + 20
+        );
+
+        // Set the text color and other styles
+        c.fillStyle = menuTextStyle.color; // Set text color to white
         c.font = menuTextStyle.font;
         c.textAlign = menuTextStyle.textAlign;
         c.textBaseline = menuTextStyle.textBaseline;
@@ -472,8 +493,8 @@ function animate(backgroundCanvas) {
         // Optional stroke for better visibility
         c.strokeStyle = "black";
         c.lineWidth = 2;
-        c.strokeText(menuText, canvas.width / 2, canvas.height / 2);
-        c.fillText(menuText, canvas.width / 2, canvas.height / 2);
+        c.strokeText(menuText, textX, textY);
+        c.fillText(menuText, textX, textY);
     } else if (gameState === "playing") {
         // Reset to default text style
         c.fillStyle = "black";

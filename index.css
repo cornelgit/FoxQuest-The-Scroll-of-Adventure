@@ -36,4 +36,13 @@ canvas {
 h1 {
     color: white;
     font-size: 20px;
+    background-color: #333;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    color: white;
+    text-align: center;
+    padding: 5px;
 }
