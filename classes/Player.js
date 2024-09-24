@@ -115,6 +115,10 @@ class Player {
             this.y = 0;
         }
 
+        if (this.x <= 0) {
+            this.x = 0;
+        }
+
         // Update hitbox position
         this.hitbox.x = this.x + 4;
         this.hitbox.y = this.y + 9;

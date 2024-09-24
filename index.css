@@ -15,6 +15,7 @@ body {
     margin: 0;
     background-color: black;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -22,4 +23,17 @@ body {
 canvas {
     width: 1024px;
     height: 576px;
+    border: 2px solid white;
+}
+
+.menu-background {
+    background-image: url("./images/fox.png");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+h1 {
+    color: white;
+    font-size: 20px;
 }

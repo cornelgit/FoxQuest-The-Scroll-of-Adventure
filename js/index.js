@@ -5,6 +5,20 @@ const dpr = window.devicePixelRatio || 1;
 canvas.width = 1024 * dpr;
 canvas.height = 576 * dpr;
 
+// Sound declarations
+const jumpSound = new Audio("./sounds/jump.mp3");
+const coinSound = new Audio("./sounds/coin.mp3");
+const gameOverSound = new Audio("./sounds/game-over.mp3");
+const gameWonSound = new Audio("./sounds/game-won.mp3");
+const playerHitSound = new Audio("./sounds/player-hit.mp3");
+const popSound = new Audio("./sounds/pop.mp3");
+
+// Menu
+let gameState = "menu"; // "menu" or "playing"
+
+// Menu text settings
+const menuText = "Press any key to start";
+
 const oceanLayerData = {
     l_New_Layer_1: l_New_Layer_1,
 };
@@ -40,7 +54,7 @@ const tilesets = {
 // Tile setup
 const collisionBlocks = [];
 const platforms = [];
-const blockSize = 16; // Assuming each tile is 16x16 pixels
+const blockSize = 16;
 
 collisions.forEach((row, y) => {
     row.forEach((symbol, x) => {
@@ -76,15 +90,15 @@ const renderLayer = (tilesData, tilesetImage, tileSize, context) => {
                     tileSize;
 
                 context.drawImage(
-                    tilesetImage, // source image
+                    tilesetImage,
                     srcX,
-                    srcY, // source x, y
+                    srcY,
                     tileSize,
-                    tileSize, // source width, height
+                    tileSize,
                     x * 16,
-                    y * 16, // destination x, y
+                    y * 16,
                     16,
-                    16 // destination width, height
+                    16
                 );
             }
         });
@@ -116,10 +130,6 @@ const renderStaticLayers = async (layersData) => {
             }
         }
     }
-
-    // Optionally draw collision blocks and platforms for debugging
-    // collisionBlocks.forEach(block => block.draw(offscreenContext));
-    // platforms.forEach((platform) => platform.draw(offscreenContext))
 
     return offscreenCanvas;
 };
@@ -429,152 +439,194 @@ function init() {
     };
 }
 
+// Game loop
 function animate(backgroundCanvas) {
     // Calculate delta time
     const currentTime = performance.now();
     const deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
 
-    // Update player position
-    player.handleInput(keys);
-    player.update(deltaTime, collisionBlocks);
+    c.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Update oposums
-    for (let i = oposums.length - 1; i >= 0; --i) {
-        const oposum = oposums[i];
-        oposum.update(deltaTime, collisionBlocks);
+    // Menu
+    if (gameState === "menu") {
+        const menuTextStyle = {
+            font: "40px Arial",
+            color: "white",
+            textAlign: "center",
+            textBaseline: "middle",
+        };
+        canvas.classList.add("menu-background");
+        c.fillStyle = "rgba(0, 0, 0, 0.7)";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+        c.fillStyle = menuTextStyle.color;
+        c.font = menuTextStyle.font;
+        c.textAlign = menuTextStyle.textAlign;
+        c.textBaseline = menuTextStyle.textBaseline;
 
-        // Jump on enemy
-        const collisionDirection = checkCollisions(player, oposum);
-        if (collisionDirection) {
-            if (collisionDirection === "bottom" && !player.isOnGround) {
-                player.velocity.y = -200;
+        // Optional stroke for better visibility
+        c.strokeStyle = "black";
+        c.lineWidth = 2;
+        c.strokeText(menuText, canvas.width / 2, canvas.height / 2);
+        c.fillText(menuText, canvas.width / 2, canvas.height / 2);
+    } else if (gameState === "playing") {
+        // Reset to default text style
+        c.fillStyle = "black";
+        c.font = "12px Arial";
+        c.textBaseline = "alphabetic";
+
+        // Update player position
+        player.handleInput(keys);
+        player.update(deltaTime, collisionBlocks);
+
+        // Update oposums
+        for (let i = oposums.length - 1; i >= 0; --i) {
+            const oposum = oposums[i];
+            oposum.update(deltaTime, collisionBlocks);
+
+            // Jump on enemy
+            const collisionDirection = checkCollisions(player, oposum);
+            if (collisionDirection) {
+                if (collisionDirection === "bottom" && !player.isOnGround) {
+                    player.velocity.y = -200;
+                    sprites.push(
+                        new Sprite({
+                            x: oposum.x,
+                            y: oposum.y,
+                            width: 32,
+                            height: 32,
+                            imageSrc: "./images/enemy-death.png",
+                            spriteCropbox: {
+                                x: 0,
+                                y: 0,
+                                width: 40,
+                                height: 41,
+                                frames: 6,
+                            },
+                        })
+                    );
+                    oposums.splice(i, 1);
+                    popSound.volume = 0.15;
+                    popSound.play();
+                } else if (
+                    collisionDirection === "left" ||
+                    collisionDirection === "right"
+                ) {
+                    const fullHearts = hearts.filter((heart) => {
+                        return !heart.depleted;
+                    });
+                    if (!player.isInvincible && fullHearts.length > 0) {
+                        fullHearts[fullHearts.length - 1].depleted = true;
+                        playerHitSound.volume = 0.5;
+                        player.setIsInvincible();
+                        playerHitSound.play();
+                    } else if (fullHearts.length === 0) {
+                        gameOverSound.volume = 0.25;
+                        gameOverSound.play();
+                        init();
+                    }
+                }
+            }
+        }
+
+        // Update sprites
+        for (let i = sprites.length - 1; i >= 0; --i) {
+            const sprite = sprites[i];
+            sprite.update(deltaTime);
+
+            if (sprite.iteration === 1) {
+                sprites.splice(i, 1);
+            }
+        }
+
+        // Update gems
+        for (let i = gems.length - 1; i >= 0; --i) {
+            const gem = gems[i];
+            gem.update(deltaTime);
+
+            // This is where we are collecting gems
+            const collisionDirection = checkCollisions(player, gem);
+            if (collisionDirection) {
+                // create an item feedback animation
                 sprites.push(
                     new Sprite({
-                        x: oposum.x,
-                        y: oposum.y,
+                        x: gem.x - 8,
+                        y: gem.y - 8,
                         width: 32,
                         height: 32,
-                        imageSrc: "./images/enemy-death.png",
+                        imageSrc: "./images/item-feedback.png",
                         spriteCropbox: {
                             x: 0,
                             y: 0,
-                            width: 40,
-                            height: 41,
-                            frames: 6,
+                            width: 32,
+                            height: 32,
+                            frames: 5,
                         },
                     })
                 );
-                oposums.splice(i, 1);
-            } else if (
-                collisionDirection === "left" ||
-                collisionDirection === "right"
-            ) {
-                const fullHearts = hearts.filter((heart) => {
-                    return !heart.depleted;
-                });
-                if (!player.isInvincible && fullHearts.length > 0) {
-                    fullHearts[fullHearts.length - 1].depleted = true;
-                } else if (fullHearts.length === 0) {
-                    init();
+                // remove a gem from game on collision
+                gems.splice(i, 1);
+                ++gemCount;
+                coinSound.currentTime = 0;
+                coinSound.volume = 0.25;
+                coinSound.play();
+
+                // Winning condition - acquire all gems
+                if (gems.length === 0) {
+                    gameWonSound.volume = 0.4;
+                    gameWonSound.play();
                 }
-                player.setIsInvincible();
             }
         }
-    }
 
-    // Update sprites
-    for (let i = sprites.length - 1; i >= 0; --i) {
-        const sprite = sprites[i];
-        sprite.update(deltaTime);
-
-        if (sprite.iteration === 1) {
-            sprites.splice(i, 1);
+        // Track scroll post distance
+        if (player.x > SCROLL_POST_RIGHT && player.x < 1680) {
+            const scrollPostDistance = player.x - SCROLL_POST_RIGHT;
+            camera.x = scrollPostDistance;
         }
-    }
-
-    // Update gems
-    for (let i = gems.length - 1; i >= 0; --i) {
-        const gem = gems[i];
-        gem.update(deltaTime);
-
-        // This is where we are collecting gems
-        const collisionDirection = checkCollisions(player, gem);
-        if (collisionDirection) {
-            // create an item feedback animation
-            sprites.push(
-                new Sprite({
-                    x: gem.x - 8,
-                    y: gem.y - 8,
-                    width: 32,
-                    height: 32,
-                    imageSrc: "./images/item-feedback.png",
-                    spriteCropbox: {
-                        x: 0,
-                        y: 0,
-                        width: 32,
-                        height: 32,
-                        frames: 5,
-                    },
-                })
-            );
-            // remove a gem from game on collision
-            gems.splice(i, 1);
-            ++gemCount;
-
-            // Winning condition - acquire all gems
-            if (gems.length === 0) {
-            }
+        if (player.y < SCROLL_POST_TOP && camera.y > 0) {
+            const scrollPostDistance = SCROLL_POST_TOP - player.y;
+            camera.y = scrollPostDistance;
         }
-    }
+        if (player.y > SCROLL_POST_BOTTOM) {
+            const scrollPostDistance = player.y - SCROLL_POST_BOTTOM;
+            camera.y = -scrollPostDistance;
+        }
 
-    // Track scroll post distance
-    if (player.x > SCROLL_POST_RIGHT && player.x < 1680) {
-        const scrollPostDistance = player.x - SCROLL_POST_RIGHT;
-        camera.x = scrollPostDistance;
-    }
-    if (player.y < SCROLL_POST_TOP && camera.y > 0) {
-        const scrollPostDistance = SCROLL_POST_TOP - player.y;
-        camera.y = scrollPostDistance;
-    }
-    if (player.y > SCROLL_POST_BOTTOM) {
-        const scrollPostDistance = player.y - SCROLL_POST_BOTTOM;
-        camera.y = -scrollPostDistance;
-    }
+        // Render scene
+        c.save();
+        c.scale(dpr + 1, dpr + 1);
+        c.translate(-camera.x, camera.y);
+        c.clearRect(0, 0, canvas.width, canvas.height);
+        c.drawImage(oceanBackgroundCanvas, camera.x * 0.32, 0);
+        c.drawImage(brambleBackgroundCanvas, camera.x * 0.16, 0);
+        c.drawImage(backgroundCanvas, 0, 0);
+        player.draw(c);
+        for (let i = oposums.length - 1; i >= 0; --i) {
+            const oposum = oposums[i];
+            oposum.draw(c);
+        }
+        for (let i = sprites.length - 1; i >= 0; --i) {
+            const sprite = sprites[i];
+            sprite.draw(c);
+        }
+        for (let i = gems.length - 1; i >= 0; --i) {
+            const gem = gems[i];
+            gem.draw(c);
+        }
+        c.restore();
 
-    // Render scene
-    c.save();
-    c.scale(dpr + 1, dpr + 1);
-    c.translate(-camera.x, camera.y);
-    c.clearRect(0, 0, canvas.width, canvas.height);
-    c.drawImage(oceanBackgroundCanvas, camera.x * 0.32, 0);
-    c.drawImage(brambleBackgroundCanvas, camera.x * 0.16, 0);
-    c.drawImage(backgroundCanvas, 0, 0);
-    player.draw(c);
-    for (let i = oposums.length - 1; i >= 0; --i) {
-        const oposum = oposums[i];
-        oposum.draw(c);
+        // UI save and restore
+        c.save();
+        c.scale(dpr + 1, dpr + 1);
+        for (let i = hearts.length - 1; i >= 0; --i) {
+            const heart = hearts[i];
+            heart.draw(c);
+        }
+        gemUI.draw(c);
+        c.fillText(gemCount, 33, 46);
+        c.restore();
     }
-    for (let i = sprites.length - 1; i >= 0; --i) {
-        const sprite = sprites[i];
-        sprite.draw(c);
-    }
-    for (let i = gems.length - 1; i >= 0; --i) {
-        const gem = gems[i];
-        gem.draw(c);
-    }
-    c.restore();
-
-    // UI save and restore
-    c.save();
-    c.scale(dpr + 1, dpr + 1);
-    for (let i = hearts.length - 1; i >= 0; --i) {
-        const heart = hearts[i];
-        heart.draw(c);
-    }
-    gemUI.draw(c);
-    c.fillText(gemCount, 33, 46);
-    c.restore();
 
     requestAnimationFrame(() => animate(backgroundCanvas));
 }
@@ -595,5 +647,15 @@ const startRendering = async () => {
     }
 };
 
-init();
+const handleKeyPress = () => {
+    if (gameState === "menu") {
+        gameState = "playing";
+        init();
+        canvas.classList.remove("menu-background");
+    }
+};
+
+// Event listener for key press
+document.addEventListener("keydown", handleKeyPress);
+
 startRendering();

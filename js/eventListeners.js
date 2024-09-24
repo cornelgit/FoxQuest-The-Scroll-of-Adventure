@@ -3,6 +3,7 @@ window.addEventListener("keydown", (event) => {
         case "ArrowUp":
             player.jump();
             keys.up.pressed = true;
+            jumpSound.play();
             break;
         case "ArrowLeft":
             keys.left.pressed = true;
