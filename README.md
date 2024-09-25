@@ -26,7 +26,9 @@ To clone the project and view its source code:
 
 2. Run game:
 
-Open index.html from root directory or use an extension like Run Server to serve locally
+    ```bash
+    Open index.html from root directory or use an extension such as Run Server to serve locally
+    ```
 
 ## Requirements
 
