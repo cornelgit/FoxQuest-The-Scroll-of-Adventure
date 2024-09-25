@@ -17,11 +17,16 @@ const backgroundMusic = new Audio("./sounds/background-music.ogg");
 // Menu
 let gameState = "menu"; // "menu", "playing", "won", or "lost"
 
-// Menu text settings
-const menuText = "Press any key to start";
-
 // Global visibility detection
 let isGamePaused = false;
+
+// Menu text
+const menuText =
+    "Objective: Collect all 42 gems without dying. Jump on enemies to defeat them. Press any key to continue...";
+
+// Submenu text
+const submenuText =
+    "Controls: Use arrow keys to move character. Press any key to START!";
 
 const oceanLayerData = {
     l_New_Layer_1: l_New_Layer_1,
@@ -464,6 +469,7 @@ function animate(backgroundCanvas) {
 
     // Menu
     if (gameState === "menu") {
+        // Menu text style
         const menuTextStyle = {
             font: "40px Arial",
             color: "white",
@@ -483,7 +489,7 @@ function animate(backgroundCanvas) {
         const textWidth = c.measureText(menuText).width; // Measure text width
         const textHeight = 40; // Approximate height of the text
         const textX = canvas.width / 2;
-        const textY = canvas.height / 2;
+        const textY = canvas.height - 40;
 
         // Draw the rectangle behind the text
         c.fillRect(
@@ -504,6 +510,48 @@ function animate(backgroundCanvas) {
         c.lineWidth = 2;
         c.strokeText(menuText, textX, textY);
         c.fillText(menuText, textX, textY);
+    } else if (gameState === "submenu") {
+        // Menu text style
+        const submenuTextStyle = {
+            font: "40px Arial",
+            color: "white",
+            textAlign: "center",
+            textBaseline: "middle",
+        };
+
+        // Draw background fox image
+        canvas.classList.add("menu-background");
+
+        // Draw the menu background
+        c.fillStyle = "rgba(0, 0, 0, 0.7)";
+        c.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Set the background color for the menu text
+        c.fillStyle = "#333"; // Background color for the text
+        const textWidth = c.measureText(submenuText).width; // Measure text width
+        const textHeight = 40; // Approximate height of the text
+        const textX = canvas.width / 2;
+        const textY = canvas.height - 40;
+
+        // Draw the rectangle behind the text
+        c.fillRect(
+            textX - textWidth / 2 - 10,
+            textY - textHeight / 2 - 10,
+            textWidth + 20,
+            textHeight + 20
+        );
+
+        // Set the text color and other styles
+        c.fillStyle = submenuTextStyle.color; // Set text color to white
+        c.font = submenuTextStyle.font;
+        c.textAlign = submenuTextStyle.textAlign;
+        c.textBaseline = submenuTextStyle.textBaseline;
+
+        // Optional stroke for better visibility
+        c.strokeStyle = "black";
+        c.lineWidth = 2;
+        c.strokeText(submenuText, textX, textY);
+        c.fillText(submenuText, textX, textY);
     } else if (gameState === "playing") {
         // Reset to default text style
         c.fillStyle = "black";
@@ -673,7 +721,7 @@ function animate(backgroundCanvas) {
         c.textAlign = "center";
         c.textBaseline = "middle";
         c.fillText(
-            "Congratulations You Win!",
+            "Congratulations, You Win!",
             canvas.width / 2,
             canvas.height / 2
         );
@@ -725,6 +773,8 @@ const startRendering = async () => {
 
 const handleKeyPress = () => {
     if (gameState === "menu") {
+        gameState = "submenu";
+    } else if (gameState === "submenu") {
         gameState = "playing";
         init();
         canvas.classList.remove("menu-background");
