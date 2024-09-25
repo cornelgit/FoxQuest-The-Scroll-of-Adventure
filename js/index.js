@@ -20,6 +20,9 @@ let gameState = "menu"; // "menu", "playing", "won", or "lost"
 // Menu text settings
 const menuText = "Press any key to start";
 
+// Global visibility detection
+let isGamePaused = false;
+
 const oceanLayerData = {
     l_New_Layer_1: l_New_Layer_1,
 };
@@ -446,6 +449,12 @@ function init() {
 
 // Game loop
 function animate(backgroundCanvas) {
+    // Exit the loop when the game is paused
+    if (isGamePaused) {
+        requestAnimationFrame(() => animate(backgroundCanvas));
+        return;
+    }
+
     // Calculate delta time
     const currentTime = performance.now();
     const deltaTime = (currentTime - lastTime) / 1000;
@@ -723,6 +732,17 @@ const handleKeyPress = () => {
         gameState = "menu";
     }
 };
+
+document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+        isGamePaused = true;
+        backgroundMusic.pause();
+    } else {
+        isGamePaused = false;
+        backgroundMusic.volume = 0.1;
+        backgroundMusic.play();
+    }
+});
 
 // Event listener for key press
 document.addEventListener("keydown", handleKeyPress);
