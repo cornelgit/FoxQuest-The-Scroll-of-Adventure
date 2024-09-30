@@ -1,3 +1,5 @@
+![Alt text](images/proj3.png)
+
 # Fox Quest: The Scroll of Adventure
 
 ## Author
