@@ -22,11 +22,11 @@ let isGamePaused = false;
 
 // Menu text
 const menuText =
-    "Objective: Collect all 42 gems without dying. Jump on enemies to defeat them. Press any key to continue...";
+    "Objective: Collect all 42 gems without dying. Jump on enemies to defeat them. Press Enter to continue...";
 
 // Submenu text
 const submenuText =
-    "Controls: Use arrow keys to move character. Press any key to START!";
+    "Controls: Use arrow keys to move character or ESC for main menu. Press Enter to START!";
 
 const oceanLayerData = {
     l_New_Layer_1: l_New_Layer_1,
@@ -605,6 +605,7 @@ function animate(backgroundCanvas) {
                         playerHitSound.play();
                     } else if (fullHearts.length === 0) {
                         backgroundMusic.pause();
+                        backgroundMusic.currentTime = 0;
                         gameOverSound.volume = 0.25;
                         gameOverSound.play();
                         gameState = "lost";
@@ -721,13 +722,13 @@ function animate(backgroundCanvas) {
         c.textAlign = "center";
         c.textBaseline = "middle";
         c.fillText(
-            "Congratulations, You Win!",
+            "Congratulations, you beat the demo!",
             canvas.width / 2,
             canvas.height / 2
         );
         c.font = "24px Arial";
         c.fillText(
-            "Press any key to return to the menu",
+            "Press Enter to return to the menu",
             canvas.width / 2,
             canvas.height / 2 + 40
         );
@@ -746,7 +747,7 @@ function animate(backgroundCanvas) {
         );
         c.font = "24px Arial";
         c.fillText(
-            "Press any key to return to the menu",
+            "Press Enter to return to the menu",
             canvas.width / 2,
             canvas.height / 2 + 40
         );
@@ -771,17 +772,37 @@ const startRendering = async () => {
     }
 };
 
-const handleKeyPress = () => {
-    if (gameState === "menu") {
-        gameState = "submenu";
-    } else if (gameState === "submenu") {
-        gameState = "playing";
-        init();
-        canvas.classList.remove("menu-background");
-    } else if (gameState === "won" || gameState === "lost") {
+const handleKeyPress = (event) => {
+    if (event.key === "Escape" && gameState === "playing") {
+        // Stop the game and return to menu
         gameState = "menu";
+        backgroundMusic.pause(); // Pause music if needed
+        backgroundMusic.currentTime = 0; // Reset music if needed
+        canvas.classList.add("menu-background"); // Return to menu background
+
+        // Optionally reset game variables or call any cleanup functions
+        resetGame();
+    }
+
+    if (event.key === "Enter") {
+        if (gameState === "menu") {
+            gameState = "submenu";
+        } else if (gameState === "submenu") {
+            gameState = "playing";
+            init();
+            canvas.classList.remove("menu-background");
+        } else if (gameState === "won" || gameState === "lost") {
+            gameState = "menu";
+        }
     }
 };
+
+function resetGame() {
+    // Reset player, enemies, gems, or any other game elements if needed
+    oposums = []; // Reset enemy array
+    gems = []; // Reset gems array
+    gemCount = 0; // Reset gem counter
+}
 
 document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
@@ -789,8 +810,10 @@ document.addEventListener("visibilitychange", function () {
         backgroundMusic.pause();
     } else {
         isGamePaused = false;
-        backgroundMusic.volume = 0.1;
-        backgroundMusic.play();
+        if (gameState === "playing") {
+            backgroundMusic.volume = 0.1;
+            backgroundMusic.play();
+        }
     }
 });
 
