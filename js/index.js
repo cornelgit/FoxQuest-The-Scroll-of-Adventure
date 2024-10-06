@@ -448,7 +448,7 @@ function init() {
     };
 
     backgroundMusic.currentTime = 0;
-    backgroundMusic.volume = 0.1;
+    backgroundMusic.volume = 0.05;
     backgroundMusic.play();
 }
 
@@ -471,7 +471,7 @@ function animate(backgroundCanvas) {
     if (gameState === "menu") {
         // Menu text style
         const menuTextStyle = {
-            font: "40px Arial",
+            font: "1.75rem Arial",
             color: "white",
             textAlign: "center",
             textBaseline: "middle",
@@ -513,7 +513,7 @@ function animate(backgroundCanvas) {
     } else if (gameState === "submenu") {
         // Menu text style
         const submenuTextStyle = {
-            font: "40px Arial",
+            font: "1.75rem Arial",
             color: "white",
             textAlign: "center",
             textBaseline: "middle",
@@ -555,7 +555,7 @@ function animate(backgroundCanvas) {
     } else if (gameState === "playing") {
         // Reset to default text style
         c.fillStyle = "black";
-        c.font = "12px Arial";
+        c.font = "1rem Arial";
         c.textBaseline = "alphabetic";
 
         // Update player position
@@ -811,7 +811,7 @@ document.addEventListener("visibilitychange", function () {
     } else {
         isGamePaused = false;
         if (gameState === "playing") {
-            backgroundMusic.volume = 0.1;
+            backgroundMusic.volume = 0.05;
             backgroundMusic.play();
         }
     }
